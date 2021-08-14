@@ -1,25 +1,47 @@
 import React, { useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+    Alert, FlatList, Keyboard, KeyboardAvoidingView, Platform,
+    StyleSheet, Text, TextInput,
+    TouchableOpacity, View
+} from 'react-native';
 import colors from '../config/colors';
 import Task from './task';
 
 function Mainscreen(props) {
-    const [task, setTask] = useState();
-    const [taskItems, setTaskItems] = useState([])
+    // const [task, setTask] = useState();
+    // const [taskItems, setTaskItems] = useState([])
 
+    const [textInput, setTextInput] = useState("")
+    const [todos, setTodos] = useState([])
 
-    const handleAddTask = () => {
-        Keyboard.dismiss();
-        console.log("🚀 ~ file: mainscreen.js ~ line 8 ~ Mainscreen ~ task", task)
-        setTaskItems([...taskItems, task])
-        setTask(null);
+    const addTodo = () => {
+        if (textInput == "") {
+            Alert.alert("Blank Input", "Please write something")
+        } else {
+            const newTodo = {
+                id: Math.random(),
+                task: textInput,
+                completed: false,
+            };
+            Keyboard.dismiss();
+            setTodos([...todos, newTodo]);
+            setTextInput('');
+        }
     }
 
+    const markTodoComplete = (todoId) => {
+        const newTodos = todos.map(item => {
+            if (item.id == todoId) {
+                return { ...item, completed: true }
+            }
+            return item
+        });
+        setTodos(newTodos)
+    }
 
-    const completeTask = (index) => {
-        let itemsCopy = [...taskItems];
-        itemsCopy.splice(index, 1)
-        setTaskItems(itemsCopy);
+    const deleteTodo = (todoId) => {
+        const newTodoLsit = todos.filter(item => item.id != todoId)
+        setTodos(newTodoLsit)
     }
 
     return (
@@ -29,28 +51,31 @@ function Mainscreen(props) {
                     Todays tasks
                 </Text>
                 <View style={styles.items}>
-                    {
-                        taskItems.map((item, index) =>
-                            <TouchableOpacity key={index} onPress={() => completeTask(index)}>
-                                <Task text={item} />
-                            </TouchableOpacity>
-
-                        )
-                    }
+                    <FlatList
+                        contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+                        showsVerticalScrollIndicator={false}
+                        data={todos}
+                        renderItem={({ item }) =>
+                            <Task
+                                markTodoComplete={markTodoComplete}
+                                todo={item}
+                                deleteTodo={deleteTodo}
+                            />}
+                    />
                 </View>
             </View>
             <KeyboardAvoidingView style={styles.writeTaskWrapper}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}>
                 <TextInput style={styles.taskInput}
-                    placeholder={"Write a task"} value={task}
-                    onChangeText={text => setTask(text)} />
-                <TouchableOpacity onPress={() => handleAddTask()}>
+                    placeholder={"Write a task"} value={textInput}
+                    onChangeText={text => setTextInput(text)} />
+                <TouchableOpacity onPress={addTodo}>
                     <View style={styles.taskAddWrapper}>
                         <Text style={styles.addText}>+</Text>
                     </View>
                 </TouchableOpacity>
             </KeyboardAvoidingView>
-        </View>
+        </View >
     );
 }
 
@@ -97,7 +122,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     addText: {
-        fontSize: 30,
+        fontSize: 25,
     },
 });
 

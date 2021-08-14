@@ -1,6 +1,7 @@
 export default {
     primaryBg: "#E8EAED",
     itemBg: "#fff",
-    squareBg: "#55BCF6",
+    squareBg: "#01937C",
+    circularBg: "#F54748"
     
 };

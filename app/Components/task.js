@@ -1,18 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import colors from '../config/colors';
 
 
-function Task(props) {
+function Task({ todo, markTodoComplete, deleteTodo }) {
     return (
         <View style={styles.item}>
-            <View style={styles.itemLeft}>
-                <View style={styles.square}></View>
-
-                <Text style={styles.itemtext}>{props.text}</Text>
-            </View>
-            <View style={styles.circular}></View>
-
+            <TouchableOpacity style={styles.itemLeft} onPress={() => markTodoComplete(todo?.id)} >
+                <View  style={styles.square}></View>
+                <Text style={{ maxWidth: "80%", textDecorationLine: todo?.completed ? "line-through" : "none" }}>
+                    {todo.task}
+                    </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => deleteTodo(todo?.id)} style={styles.circular}></TouchableOpacity>
         </View>
     );
 }
@@ -33,21 +33,21 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
     },
     square: {
-        width: 24,
-        height: 24,
+        width: 26,
+        height: 26,
         backgroundColor: colors.squareBg,
-        opacity: 0.4,
+        opacity: 1,
         borderRadius: 5,
         marginRight: 15,
     },
-    itemtext: {
-        maxWidth: "80%"
-    },
+    // itemtext:{
+    //     maxWidth: "80%",
+    // },
     circular: {
-        width: 12,
-        height: 12,
-        borderColor: "#55BCF6",
-        borderWidth: 2,
+        width: 18,
+        height: 18,
+        backgroundColor: colors.circularBg,
+        // borderWidth: 2,
         borderRadius: 5,
     },
 
