@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "todolist",
-    "slug": "todolist",
+    "name": "To do app",
+    "slug": "to-do-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
@@ -13,7 +13,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -25,6 +27,8 @@
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
-    }
+    },
+    "description": "Features of this app:\n\n1. Current date show.\n2. Task can add.\n3. Task can be marked complete.\n4. Task can be deleted totally (single)\n5. All the tasks can be deleted at one time.",
+    "githubUrl": "https://github.com/Nur-allhi/TodoList-R_Native.git"
   }
 }

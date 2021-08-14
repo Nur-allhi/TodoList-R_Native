@@ -7,10 +7,10 @@ function Task({ todo, markTodoComplete, deleteTodo }) {
     return (
         <View style={styles.item}>
             <TouchableOpacity style={styles.itemLeft} onPress={() => markTodoComplete(todo?.id)} >
-                <View  style={styles.square}></View>
+                <View style={styles.square}></View>
                 <Text style={{ maxWidth: "80%", textDecorationLine: todo?.completed ? "line-through" : "none" }}>
                     {todo.task}
-                    </Text>
+                </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => deleteTodo(todo?.id)} style={styles.circular}></TouchableOpacity>
         </View>

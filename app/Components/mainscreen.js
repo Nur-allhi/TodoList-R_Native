@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
 import {
     Alert, FlatList, Keyboard, KeyboardAvoidingView, Platform,
     StyleSheet, Text, TextInput,
@@ -8,12 +9,28 @@ import colors from '../config/colors';
 import Task from './task';
 
 function Mainscreen(props) {
-    // const [task, setTask] = useState();
-    // const [taskItems, setTaskItems] = useState([])
-
     const [textInput, setTextInput] = useState("")
     const [todos, setTodos] = useState([])
 
+    useEffect(() => {
+        getTodosFromThelocalstorage();
+    }, [])
+
+    useEffect(() => {
+        saveToDeviceLocalStorage(todos);
+    }, [todos])
+
+
+    // Save all the task to the device:
+    const saveToDeviceLocalStorage = async (todos) => {
+        try {
+            const stringifyTodos = JSON.stringify(todos)
+            await AsyncStorage.setItem('todos', stringifyTodos)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    // Add task to the list:
     const addTodo = () => {
         if (textInput == "") {
             Alert.alert("Blank Input", "Please write something")
@@ -29,32 +46,64 @@ function Mainscreen(props) {
         }
     }
 
+    const getTodosFromThelocalstorage = async () => {
+        try {
+            const todos = await AsyncStorage.getItem("todos");
+            if (todos != null) {
+                setTodos(JSON.parse(todos))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // Task can be marked complete:
     const markTodoComplete = (todoId) => {
         const newTodos = todos.map(item => {
             if (item.id == todoId) {
                 return { ...item, completed: true }
-            }
-            return item
+            } return item
         });
         setTodos(newTodos)
     }
 
+    // Delete single task from the list:
     const deleteTodo = (todoId) => {
         const newTodoLsit = todos.filter(item => item.id != todoId)
         setTodos(newTodoLsit)
     }
 
+    // Clear all the task in one click:
+    const clearAllTask = () => {
+        Alert.alert("Confrim", "Clear all todos !!", [
+            {
+                text: "Yes",
+                onPress: () => setTodos([]),
+            },
+            {
+                text: "No"
+            }
+        ])
+
+    }
     return (
         <View style={styles.container}>
             <View style={styles.tasksWrapper}>
-                <Text style={styles.sectionTitle}>
-                    Todays tasks
-                </Text>
+                <View style={styles.titleWrapper}>
+                    <Text style={styles.sectionTitle}>
+                        Todays tasks
+                    </Text>
+                    <TouchableOpacity onPress={clearAllTask} style={styles.clearAllButton}>
+                        <Text style={styles.clearAllButton}>Clear all</Text>
+                    </TouchableOpacity>
+                </View>
+                <Text style={styles.uIDateAndTime}>{new Date().toDateString()}</Text>
                 <View style={styles.items}>
                     <FlatList
                         contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
                         showsVerticalScrollIndicator={false}
                         data={todos}
+                        keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) =>
                             <Task
                                 markTodoComplete={markTodoComplete}
@@ -89,9 +138,22 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         fontSize: 20,
     },
+    titleWrapper: {
+        flexDirection: 'row',
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
     sectionTitle: {
-        fontSize: 24,
+        fontSize: 26,
         fontWeight: "bold",
+    },
+    clearAllButton: {
+        fontSize: 15,
+        fontWeight: "700",
+    },
+    uIDateAndTime: {
+        fontSize: 14,
+        paddingHorizontal: 5,
     },
     items: {
         marginTop: 30,
