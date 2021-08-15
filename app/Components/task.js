@@ -2,13 +2,17 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import colors from '../config/colors';
 
-
 function Task({ todo, markTodoComplete, deleteTodo }) {
     return (
         <View style={styles.item}>
             <TouchableOpacity style={styles.itemLeft} onPress={() => markTodoComplete(todo?.id)} >
                 <View style={styles.square}></View>
-                <Text style={{ maxWidth: "80%", textDecorationLine: todo?.completed ? "line-through" : "none" }}>
+                <Text style={{
+                    maxWidth: "80%",
+                    fontSize: 18,
+                    textDecorationLine: todo?.completed ? "line-through" : "none",
+                    color: todo?.completed ? colors.taskCompleteTitle : colors.taskTitle,
+                }}>
                     {todo.task}
                 </Text>
             </TouchableOpacity>
@@ -40,14 +44,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginRight: 15,
     },
-    // itemtext:{
-    //     maxWidth: "80%",
-    // },
     circular: {
         width: 18,
         height: 18,
         backgroundColor: colors.circularBg,
-        // borderWidth: 2,
         borderRadius: 5,
     },
 
